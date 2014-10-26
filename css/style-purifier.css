@@ -1,0 +1,93 @@
+/* CSS Document */
+
+* {
+	margin:0; padding:0;
+	font-size:100%;
+}
+
+body{
+	background:#FFFFFF;
+}
+
+img {vertical-align:top;}
+a img { border:0;}
+
+ul { list-style:none;}
+
+.left { float:left;}
+.right {float:right;}
+.clear  { clear:both;}
+
+
+html, input, textarea
+	{
+		font-family:Arial, Helvetica, sans-serif;
+		font-size:0.813em;
+		line-height:1.308em;
+		color:#05506d;
+	}
+
+input, select { vertical-align:middle; font-weight:normal;}
+
+a {color:#04a9fe;}
+a:hover{text-decoration:none;}
+p {padding-top:15px;}
+
+/* ============================= main layout ====================== */
+
+li {background:url(images/list-bg.gif) no-repeat 0 12px; padding-left:13px; font-size:1.154em; line-height:1.6em;}
+.list li {background:url(images/list-bg.gif) no-repeat 0 8px; padding:0 0 10px 13px; font-size:1em; line-height:1.308em;}
+.list li a {display:block; font-size:1.154em; line-height:1em;}
+
+
+.link {background:url(images/link-tail-bg.gif) top repeat-x; display:inline-block; color:#0b91de; text-decoration:none; font-weight:bold; line-height:1em; margin-top:24px; cursor:pointer;}
+.link span {background:url(images/link-right-bg.gif) top right no-repeat; display:inline-block;}
+.link span span {background:url(images/link-left-bg.gif) top left no-repeat; padding:6px 28px 18px 22px;}
+.link2 span span {padding:6px 18px 18px 12px;}
+.link:hover {color:#000;}
+
+.top-tail {background:url(images/body-tail1.gif) repeat-x 0 680px #d6ecfc;}
+.top-tail2 {background:#fff; width:980px; height:694px; position:absolute;}
+.bottom-tail {background:url(images/bottom-tail.gif) bottom repeat-x;}
+
+.imgindent {margin:0 20px 0 0; float:left;}
+
+h2 {font-size:1.539em; line-height:1em; margin-bottom:37px; font-weight:normal; color:#000000;}
+.title {background:url(images/title-tail-bg.jpg) top repeat-x; margin-bottom:20px;}
+.title div {background:url(images/title-right-bg.jpg) top right no-repeat;}
+.title h2 {background:url(images/title-left-bg.jpg) top left no-repeat; margin:0; padding:10px 0 16px 18px;}
+
+
+h4 {font-size:1.308em; line-height:1em; margin-bottom:10px; font-weight:normal;}
+h4 span {color:#04a9fe; text-transform:uppercase;}
+cite {font-style:normal;}
+
+/* ============================= header ====================== */
+
+.menu {text-align:center;}
+.flash {position:absolute;}
+
+/* ============================= content ====================== */
+
+.margin1 {margin-top:27px;}
+.margin2 {margin-top:17px;}
+.margin3 {margin-top:47px;}
+.col-pad {padding-right:18px;}
+.banners {margin:0 0 10px -96px; position:relative;}
+.phone {display:inline-block; width:90px;}
+.normal {text-transform:none;}
+
+/* ============================= footer ====================== */
+
+#footer a {color:#fffff; text-decoration:none;}
+#footer a:hover {text-decoration:underline;}
+
+/* ============================= forms ============================= */
+
+
+#ContactForm .rowi {height:40px;}
+#ContactForm .link {margin-right:15px;}
+
+.input {width:192px; height:17px; border:1px solid #7abbe8; background:#fff; padding:0 0 0 5px; font-size:1em;}
+textarea {width:192px; height:107px; border:1px solid #7abbe8; background:#fff; padding:0 0 0 5px; overflow:auto; font-size:1em;}
+#breadcrumbs {padding: 20px 0px 20px 0px;}

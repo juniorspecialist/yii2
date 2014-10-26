@@ -1,0 +1,26 @@
+/* IE7 specific styles */
+#constuction-box {display:inline;}
+#intro-box {display:inline;}
+
+.tabs code { overflow:visible !important;}
+footer nav li,
+dl.def-list dt span,
+.button,
+#constuction-box,
+#intro-box,
+#content article footer a,
+.comments li .comment,
+#reply-form input[type=text],
+#reply-form input[type=email],
+#reply-form textarea,
+#reply-form input[type=reset], #reply-form input[type=submit],
+.slideDown dt,
+.slideDown.absolute dd,
+#login-form input[type=submit],
+#contact-form input[type=text],
+#contact-form input[type=email],
+#contact-form textarea,
+#contact-form input[type=reset], #contact-form input[type=submit], #contact-form #submit, #contact-form #clear
+{
+	behavior: url(js/PIE.htc);
+}

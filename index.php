@@ -1,0 +1,1 @@
+/var/www/yii2/web/index.php

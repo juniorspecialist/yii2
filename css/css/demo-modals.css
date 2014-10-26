@@ -1,0 +1,26 @@
+/* modal box style, can be anything you want */
+.modal {
+    background: #fff;
+    width: 700px;
+    margin: 0px auto;
+    color: #4C85C0;
+    border: 3px solid #4C85C0;
+    padding: 0px;
+    display: none;
+
+			border-radius:10px;
+			-moz-border-radius:10px;
+			-webkit-border-radius:10px;
+			behavior:url(js/PIE.htc);
+}
+
+.modal .closemodal {
+    float: right;
+    text-decoration: none;
+    font-size: 40px;
+    cursor: pointer;
+}
+.modal-header h2{
+}
+
+.trigger1 {float:left;}

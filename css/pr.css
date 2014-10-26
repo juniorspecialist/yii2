@@ -1,0 +1,251 @@
+/* ============================= main layout ====================== */
+.imgindent {margin:-10px 17px 0 0; float:left; position:relative;}
+.extra{ margin:-16px 0 19px 0;}
+.space1{ margin-left:8px;}
+.space2{ margin-left:32px;}
+.phone{ float:right; padding-right:70px;}
+.margin1{ margin-top:33px;}
+.margin2{ margin-top:9px;}
+.padding1{ padding-top:20px;}
+.padding2{ padding-bottom:15px;}
+.padding3{ padding-top:30px;}
+.padding4{ padding-bottom:2px !important;}
+
+/* ============================= header ====================== */
+#header{ position:relative;}
+#header .flash1{ position:relative;}
+#header .flash2{ margin-top:-127px;}
+#header object{ vertical-align:top;}
+
+
+h1 {	font-family: tahoma;
+	font-size: 11px;
+	color: #8A9EB3;   
+	text-decoration: none;
+	font-weight: normal;	
+}
+h2 {	
+	font-family: tahoma;
+	font-size: 13px;
+	color: #595A5E;
+	text-decoration: none;
+	font-weight: normal;	
+}
+h3 {	
+	font-family: tahoma;
+	font-size: 13px;
+	color: #595A5E;
+	text-decoration: none;
+	font-weight: normal;	
+}
+
+strong {	font-weight: normal;
+}
+
+a {font-family: tahoma;font-size: 11px;color: #2778CA;text-decoration: none;}
+a:hover {font-family: tahoma;font-size: 11px;color: #FC7C03;text-decoration: none;}
+
+.text {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #8A9EB3;   
+	text-decoration: none;
+	font-weight: normal;	
+}
+
+.text00 {
+
+	font-family: tahoma;
+	font-size: 13px;
+	color: #8A9EB3;   
+	text-decoration: none;
+}
+
+.text000 {
+
+	font-family: tahoma;
+	font-size: 15px;
+	color: #324065;   
+	text-decoration: none;
+}
+
+.text0 {
+
+	font-family: tahoma;
+	font-size: 10px;
+	color: #595A5E;
+	text-decoration: none;
+}
+
+.text1 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #595A5E;
+	text-decoration: none;
+}
+
+.text10 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #595A5E;
+	text-decoration: none;
+	font-style: italic;
+}
+
+.text111{
+
+	font-family: trashhand;
+	font-size: 18px;
+	color: #ffffff;
+	text-decoration: none;
+	font-style: italic;
+	background-image: url(img/vent_pics/back.jpg)
+}
+
+
+
+.text2 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #686868;
+	text-decoration: none;
+}
+
+.text3 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #9A9A9A;
+	text-decoration: none;
+}
+
+.text4 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #2778CA;
+	text-decoration: none;
+}
+.text5 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #1A3476;
+	text-decoration: none;
+}
+
+.text50 {
+
+	font-family: tahoma;
+	font-size: 13px;
+	color: #1A3476;
+	text-decoration: none;
+}
+
+.t1 {
+
+	font-family: tahoma;
+	font-size: 12px;
+	color: #2778CA;
+	text-decoration: none;
+	font-weight: normal;	
+}
+
+.t1:hover {
+
+	font-family: tahoma;
+	font-size: 12px;
+	color: #FC7C03;
+	text-decoration: none;
+}
+
+.t2 {
+
+	font-family: tahoma;
+	font-size: 14px;
+	color: #9A9A9A;
+	text-decoration: none;
+}
+
+.t3 {
+
+	font-family: tahoma;
+	font-size: 12px;
+	color: #FC7C03;
+	text-decoration: none;
+}
+
+
+.link1 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #2778CA;
+	text-decoration: none;
+}
+
+.link1:hover {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #FC7C03;
+	text-decoration: none;
+}
+
+.link11 {
+
+	font-family: tahoma;
+	font-size: 13px;
+	color: #2778CA;
+	text-decoration: none;
+}
+
+.link11:hover {
+
+	font-family: tahoma;
+	font-size: 13px;
+	color: #FC7C03;
+	text-decoration: none;
+}
+
+
+.link2 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #DBDBDB;
+	text-decoration: none;
+}
+
+.link2:hover {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #FC7C03;
+	text-decoration: none;
+}
+
+.link3 {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #DBDBDB;
+	text-decoration: none;
+}
+
+.link3:hover {
+
+	font-family: tahoma;
+	font-size: 11px;
+	color: #E54A49;
+	text-decoration: none;
+}
+.clients-list { width:100%; overflow:hidden;}
+.clients-list li { float:left; padding:0 1px 1px 0;}
+.clients-list li:hover {opacity:0.5; filter: alpha(opacity = 50);}
+
+#breadcrumbs {padding: 20px 0px 20px 0px;}

@@ -1,0 +1,15 @@
+#main { width:980px; text-align:left; position:relative; background:url(images/body-tail1.gif) repeat-x 0 684px #d6ecfc;}
+
+#header {height:396px; position:relative;}
+
+#content {padding:0 107px 26px 107px; position:relative;}
+
+#footer { height:37px; padding:16px 0 0 104px;}
+
+.col-1, .col-2, .col-3, .column-1, .column-2 {float:left;}
+.container {width:100%; overflow:hidden;}
+
+.column-1 {width:205px; padding:309px 50px 0 0;}
+.column-2 {width:510px;}
+
+.col-1, .col-2 {width:246px;}
