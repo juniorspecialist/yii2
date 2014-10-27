@@ -30,6 +30,8 @@ class Wayfinder extends  \app\components\Ditto{
         //строка вызова пример - Ditto? &tpl=`radiator-tovar-ditto` &extenders=`request`
         $this->callString = str_replace('Wayfinder?', '', $this->callString);
 
+        //echo $this->callString.'<br>';
+
         //получаем массив параметров для вызова обработки
         $params_list = explode('&', $this->callString);
 
@@ -62,11 +64,13 @@ class Wayfinder extends  \app\components\Ditto{
             $query->orderBy(array($this->sortBy=>'asc'));
         }
 
-
         // execute the query
         $rows = $query->all();
 
         $this->result = '<ul class="'.$this->outerClass.'">';
+
+
+        //echo '<pre>'; print_r($rows);
 
         if(!empty($rows)){
             foreach($rows as $model) {

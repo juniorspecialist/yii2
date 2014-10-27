@@ -46,7 +46,6 @@ class Phx extends \app\components\Ditto {
 
         //echo $this->callString.'<br>';
 
-
         //другой случай, когда вызов сниппета-[*isfolder:is=`1`:then=`wara<br>`:is=``:then=`CO`:else=`COM 350/ 03`+]
         $this->parseIfElseParams($this->callString);
 
@@ -60,18 +59,12 @@ class Phx extends \app\components\Ditto {
             $this->then= $this->parseValue($then_list[1]);
         }
 
-        //echo '<pre>'; print_r($this->model); die();
-
-            if((string)$this->model['isfolder']==$this->is){
-                //die($this->then);
-                $this->result = $this->then;
-            }else{
-                //проверим существования условия на ELSE
-                $this->result = $this->else;
-            }
-
-
-        //die($this->is.'=is|'.$this->callString.'|'.$this->result);
+        if((string)$this->model['isfolder']==$this->is){
+            $this->result = $this->then;
+        }else{
+            //проверим существования условия на ELSE
+            $this->result = $this->else;
+        }
     }
 
     /*
@@ -79,25 +72,28 @@ class Phx extends \app\components\Ditto {
      * значение может быть как-сниппет,чанк, тв-параметр, определяем и преобразовываем в конечное значение
      */
     public function parseValue($value){
-        //параметр - вызов сниппет
-        if( preg_match('~\[(\[|\!)(.*?)(\!|\])\]~ms', $value,$find)){
-            //echo 'snippet<br>';echo '<pre>'; print_r($find);
-            //заменяем вызов чанка его содержимым
-            $value = str_replace($value, Parser::mergeSnippet($value, $this->model), $value);
-        }
 
+        $new_value = '';
 
-        //параметр - вызов чанк
-        if(preg_match('/{{(.*?)}}/i',$value,$find)){
-            //echo 'chunk<br>';
-            $value = str_replace($value, Parser::mergeChunkContent($value), $value);
-        }
-
-        //параметр - тв-параметр документа
-        if (preg_match('~\[(\*|\+)(.*?)(\*|\+)\]~', $value, $matches)) {
-            //echo '<pre>'; print_r($matches); //die();
-            $value = Parser::mergeTvParamsContent($value, $this->model);
-        }
+//        //параметр - вызов сниппет
+//        if( preg_match('~\[(\[|\!)(.*?)(\!|\])\]~ms', $value,$find)){
+//            //echo 'snippet<br>';echo '<pre>'; print_r($find);
+//            //заменяем вызов чанка его содержимым
+//            $new_value = str_replace($value, Parser::mergeSnippet($value, $this->model), $value);
+//        }
+//
+//
+//        //параметр - вызов чанк
+//        if(preg_match('/{{(.*?)}}/i',$value,$find)){
+//            //echo 'chunk<br>';
+//            $new_value = str_replace($value, Parser::mergeChunkContent($value), $value);
+//        }
+//
+//        //параметр - тв-параметр документа
+//        if (preg_match('~\[(\*|\+)(.*?)(\*|\+)\]~', $value, $matches)) {
+//            //echo '<pre>'; print_r($matches); //die();
+//            $new_value = Parser::mergeTvParamsContent($value, $this->model);
+//        }
 
         return $value;
     }
@@ -108,32 +104,35 @@ class Phx extends \app\components\Ditto {
      */
     public function parseIfElseParams($param){
 
+        //[+phx:if=`[*vendorcode*]`:is=`DeLonghi`:then=`[!Wayfinder? &startId=`61463` &hideSubMenus=`true` &outerClass=`nav  nav-list` &sortBy=`menutitle`   &innerRowTpl=`rowTpl` &innerClass=`nav  nav-list nav-list2`!]`:else=``+]
         //обработка значения IF
-        if(preg_match('/if=`(.*?)`/i', $param, $if_list)){
+        if(preg_match('/if=`(.*?)`(:is|\+\]|\*\])/i', $param, $if_list)){
             //if_list[1] - значение параметра для условия
             $this->if = $this->parseValue($if_list[1]);
         }
 
         //обработка значения IS
-        if(preg_match('/is=`(.*?)`/i', $param, $is_list)){
+        if(preg_match('/is=`(.*?)`(:then|\+\]|\*\])/i', $param, $is_list)){
             //if_list[1] - значение параметра для условия
             $this->is = $this->parseValue($is_list[1]);
         }
 
         //обработка значения THEN
-        if(preg_match('/then=`(.*?)`/mis', $param, $then_list)){
+        if(preg_match('/then=`(.*?)`(:else|\+\]|\*\])/mis', $param, $then_list)){
+            //print_r($then_list);
             //if_list[1] - значение параметра для условия
             //определим какой тип значения указан
             $this->then= $this->parseValue($then_list[1]);
         }
         //обработка значения ELSE
         if(preg_match('/else=(.*)/s', $param)){
-            if(preg_match('/else=`(.+)`/simx', $param, $else_list)){
+            if(preg_match('/else=`(.+)`(\+\]|\*\])/simx', $param, $else_list)){
                 //if_list[1] - значение параметра для условия
                 $this->else = $this->parseValue($else_list[1]);
             }
 
         }
+        //echo 'if='.$this->if.'|is='.$this->is.'|then='.$this->then.'|else='.$this->else.'<br>';
     }
 
     /*

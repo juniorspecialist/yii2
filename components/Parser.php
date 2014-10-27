@@ -77,13 +77,34 @@ class Parser {
      */
     public function parseSnippet(){
 
-         preg_match_all('/\[(\[|\!|\+phx)(.*?)(\!|`\+|\]|)\]/mis', $this->html, $matches);
+        //die('snippet');
+
+         //preg_match_all('/\[(\[|\!|\+phx)(.*?)(\!|\+|\])\]/mis', $this->html, $matches);
+        preg_match_all('/\[(\[|\!)(.*?)(\!|\])\]/mis', $this->html, $matches);
+
+        //определяем вызовы PHX сниппета
+        preg_match_all('/\[\+phx(.*?)\+\]/mis', $this->html, $matches_phx);
+
+        //echo '<pre>'; print_r($matches_phx);
+
+        if(!empty($matches_phx[0])){
+            foreach($matches_phx[0] as $phx_rule){
+                $matches[0][] = $phx_rule;
+            }
+        }
 
         //отлавливаем PHX - isFolder - и добавим в список найденных снипетов
         preg_match('/\[(\*isfolder)(.*?)(`\*)\]/mis', $this->html, $isFolder);
-        if(!empty($isFolder[0])){ $matches[0][] = $isFolder[0];}
+        if(!empty($isFolder[0])){
+            foreach($isFolder[0] as $isFolderRule){
+                $matches[0][] = $isFolderRule;
+            }
+        }
 
         $matches_main = array();
+
+        //echo '<pre>'; print_r($matches[0]); //die('snippet');
+
         $replace = array();
         foreach($matches[0] as $index=>$snippet){
 
@@ -91,6 +112,9 @@ class Parser {
 
             $matches_main[] = $matches[0][$index];
         }
+
+//        echo '<pre>'; print_r($replace);
+//        echo '<pre>'; print_r($matches_main); die();
 
         $this->html = str_replace($matches_main, $replace, $this->html);
 
@@ -107,14 +131,18 @@ class Parser {
 
         $replace = '';//результат работы сниппета
 
-        //echo $html.'<br>';
+        //echo 'html='.$html.'<br>';
 
         //нашли вызов сниппета - PHX
         if(preg_match('/(.*?):(.*?)/',$html)){
+
             $phx = new \app\components\Phx($model,$html);
             $phx->html = $html;
             $phx->action();
             $replace =  $phx->result;
+
+            //echo 'result_phx='.$replace.'<br>';
+            //die('phx');
         }
 
         //ищем вызов сниппет
@@ -156,13 +184,16 @@ class Parser {
 //        }
 
         //вызов сниппета (GlobalDitto2) - перелинковка страничек
-//        if(preg_match('/(\W|^)GlobalDitto2(\W|$)/i',$html)){
-//            $cross_link = new \app\components\CrossLinks($model,$html);
-//            $cross_link->html = $html;
-//            $cross_link->parseString();
-//            $cross_link->action();
-//            $replace =  $cross_link->result;
-//        }
+        if(preg_match('/(\W|^)GlobalDitto2(\W|$)/i',$html)){
+
+            $cross_link = new \app\components\CrossLinks($model,$html);
+            $cross_link->html = $html;
+            $cross_link->parseString();
+            $cross_link->action();
+            $replace =  $cross_link->result;
+            //echo 'replace='.$replace.'<br>';
+            //die($html);
+        }
 
         return $replace;//возвращаем результат работы сниппета
     }
@@ -231,13 +262,20 @@ class Parser {
         if (preg_match_all('~{{(.*?)}}~', $this->html, $matches)) {
 
             foreach($matches[1] as $title_chunk){
+
+                //echo $title_chunk.'<br>';
+
                 //заменяем вызов чанка его содержимым
                 $matches_main[] = '{{'.$title_chunk.'}}';
                 $replace[] = \app\models\Chunk::findChunkByName($title_chunk);
             }
 
+            //echo '===============================<br>';
+
             //вызов чанков заменяем их значениями
             $this->html = str_replace($matches_main, $replace, $this->html);
+
+            $this->parseSnippet();
 
             unset($matches_main);unset($replace);
         }
@@ -250,21 +288,38 @@ class Parser {
 
         //if (preg_match_all('~\[(\*|\+)(.*?)(\*|\+)\]~', $html, $matches)) {
         if (preg_match_all('~\[(\*|\+)[\w|\-]{1,}(\*|\+)\]~', $html, $matches)) {
-            //echo '<pre>'; print_r($matches);
-            //echo '<pre>'; print_r($model);//die();
-            //die($model['template']);
-            //foreach($matches[2] as $param){
+
+            //заменяем вызов чанка его содержимым
+            $replaced = false;
+
             foreach($matches[0] as $param){
 
-                $param = str_replace(array('[',']','+'),'', $param);
+                $param = str_replace(array('[',']','+', '*'),'', $param);
 
                 if(is_array($model)){
                     //заменяем вызов чанка его содержимым
                     if(!empty($model[$param])){
+                        $replaced = true;
                         $html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model[$param], $html);
                     }else{
                         if(isset($model['tv_'.$param])){
+                            $replaced = true;
                             $html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model['tv_'.$param], $html);
+                        }
+                        //спец. замена для сниппета- перелинковки страниц
+                        if(isset($model['tv_'.$param])){
+                            $replaced = true;
+                            $html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model['tv_'.$param], $html);
+                        }
+                        if(isset($model['tv_'.$param.'1'])){
+                            $replaced = true;$html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model['tv_'.$param.'1'], $html);
+                        }
+
+                        if(isset($model['tv_'.$param.'2'])){
+                            $replaced = true;$html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model['tv_'.$param.'2'], $html);
+                        }
+                        if(isset($model['tv_'.$param.'3'])){
+                            $replaced = true;$html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model['tv_'.$param.'3'], $html);
                         }
                     }
                     if(isset($model['id'])){
@@ -274,9 +329,11 @@ class Parser {
                 }else{
                     //заменяем вызов чанка его содержимым
                     if(!empty($model->{$param})){
+                        $replaced = true;
                         $html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model->{$param}, $html);
                     }else{
                         if(isset($model->{'tv_'.$param})){
+                            $replaced = true;
                             $html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $model->{'tv_'.$param}, $html);
                         }
                     }
@@ -289,13 +346,7 @@ class Parser {
 
                 $html = str_replace(array('[+'.$param.'+]','[*'.$param.'*]'),'',$html);
             }
-
-            //заменяем НЕ найденные тв-параметры - на пустое значение
-
         }
-
-        //$html = str_replace('[+url+]', Url::to(['/site/index', 'alias'=>$model->alias]) , $html);
-
         return $html;
     }
 
