@@ -81,6 +81,7 @@ class Parser {
 
          //preg_match_all('/\[(\[|\!|\+phx)(.*?)(\!|\+|\])\]/mis', $this->html, $matches);
         preg_match_all('/\[(\[|\!)(.*?)(\!|\])\]/mis', $this->html, $matches);
+        //die($this->html);
 
         //определяем вызовы PHX сниппета
         preg_match_all('/\[\+phx(.*?)\+\]/mis', $this->html, $matches_phx);
@@ -96,9 +97,10 @@ class Parser {
         //отлавливаем PHX - isFolder - и добавим в список найденных снипетов
         preg_match('/\[(\*isfolder)(.*?)(`\*)\]/mis', $this->html, $isFolder);
         if(!empty($isFolder[0])){
-            foreach($isFolder[0] as $isFolderRule){
-                $matches[0][] = $isFolderRule;
-            }
+            //echo '<pre>'; print_r($isFolder[0]); die();
+            //foreach($isFolder[0] as $isFolderRule){
+                $matches[0][] = $isFolder[0];
+            //}
         }
 
         $matches_main = array();

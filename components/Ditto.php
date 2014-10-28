@@ -188,9 +188,12 @@ class Ditto {
             $list = explode(',', str_replace(array('`',' '),'',$this->documents));
 
             //применим список ID доков по которым будем делать поиск контента
-            $query->where([
-                'id' => $list,
-            ]);
+            foreach($list as $id){
+                $query->andWhere(['id' => (int)$id]);
+            }
+//            $query->where([
+//                'id' => $list,
+//            ]);
 
 
         }elseif(!empty($this->startID)){

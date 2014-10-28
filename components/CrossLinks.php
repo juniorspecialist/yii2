@@ -30,7 +30,7 @@ class CrossLinks extends \app\components\Ditto{
         */
     public function parseString(){
 
-        echo $this->callString.'<br>';//die();
+        //echo $this->callString.'<br>';//die();
 
         $this->callString = str_replace('GlobalDitto2?', '', $this->callString);
 
@@ -67,14 +67,27 @@ class CrossLinks extends \app\components\Ditto{
 
         $query = new Query;
 
-        $query->select(['id', 'alias', 'tv_param1', 'tv_param2', 'tv_param3', 'pagetitle', 'tv_name', 'tv_model', 'tv_artikul', 'tv_diametr', 'tv_weight']);
+        $query->select(['id', 'tv_seria','tv_vendorcode','alias', 'tv_param1', 'tv_param2', 'tv_param3', 'pagetitle', 'tv_name', 'tv_model', 'tv_artikul', 'tv_diametr', 'tv_weight']);
 
         // compose the query
         $query->from(Content::collectionName())
-            ->where(['parent'=> (int)$this->model['parent']]);
-        //$query->limit(5);
+            //->where((array)['and', 'parent'=>(int)$this->model['parent'], ['or', 'tv_param1!=""', 'tv_param2!=""', 'tv_param3!=""']]);
+            //->where(['not in', ['tv_param1'=>'""'], ['tv_param2' => '""'], ['tv_param3' => '""'] ])
+            ->Where(['parent'=>(int)$this->model['parent']])
+//            ->andWhere(['not in', 'tv_param1', '""'])
+//            ->andWhere(['not in', 'tv_param2', '""'])
+//            ->andWhere(['not in', 'tv_param3', '""'])
+            ;
+//            ->orFilterWhere(['not in', 'tv_param1', '""'])
+//            ->orFilterWhere(['not in', 'tv_param2', '""'])
+//            ->orFilterWhere(['not in','tv_param3', '""']);
+        //$query->limit(4);
+
+        //echo '<pre>'; print_r($query); die();
 
         $rows = $query->all();
+
+        //echo '<pre>'; print_r($rows); die();
 
         $find = false;
 
@@ -83,47 +96,79 @@ class CrossLinks extends \app\components\Ditto{
         if(!empty($rows)){
             foreach($rows as $child) {
 
-                //die($this->content_tpl);
-
-
                 if($count_find==4){break;}
 
                 //если находим тек. док. то даём флаг старта для формирования блоков перелинковки
-                if($child['id']==$this->model['id']){$find = true;}
+                if($child['id']==$this->model['id']){$find = true;continue;}
+
+                if(empty($child['tv_param'.$count_find])){ continue;}
 
                 //нашли тек. документ по очереди в выборке, теперь берём следующие за ним доки, чтоб сформировать блоки перелинковки
-                if($find){
+                if($find==true){
 
-                    if(isset($child['tv_vendorcode'])){$this->result.= str_replace('{*vendorcode*}', $child['tv_vendorcode'], $this->content_tpl);}
+                    $this->result.= str_replace('[+param+]', $this->replaceParamsInTemplate($child, $count_find, $child['tv_param'.$count_find]), $this->content_tpl);
 
-                    if(isset($child['tv_seria'])){$this->result.= str_replace('{*seria*}', $child['tv_seria'], $this->content_tpl);}
-
-                    if(isset($child['tv_model'])){$this->result.= str_replace('{*model*}', $child['tv_model'], $this->content_tpl);}
-
-                    if(isset($child['tv_name'])){$this->result.= str_replace('{*name*}', $child['tv_name'], $this->content_tpl);}
-
-                    if(isset($child['tv_artikul'])){$this->result.= str_replace('{*artikul*}', $child['tv_artikul'], $this->content_tpl);}
-
-                    if(isset($child['tv_diametr'])){$this->result.= str_replace('{*diametr*}', $child['tv_diametr'], $this->content_tpl);}
-
-                    if(isset($child['tv_weight'])){$this->result.= str_replace('{*weight*}', $child['tv_weight'], $this->content_tpl);}
-
-                    if(isset($child['tv_glubina'])){$this->result.= str_replace('{*glubina*}', $child['tv_glubina'], $this->content_tpl);}
-
-                    if(isset($child['tv_du'])){$this->result.= str_replace('{*du*}', $child['tv_du'], $this->content_tpl);}
-
-                    $this->result.= str_replace(
-                        ['<a>','{*pagetitle*}'],
-                        ['<a href="'.Url::to(['/site/index','alias'=>$child['alias']]).'">',$child['pagetitle']],
-                    $child['tv_param'.$count_find]);
-
-                    //$this->result.= str_replace('',$this->content_tpl, $model);
-
-                    //$this->result.=Parser::mergeTvParamsContent($this->content_tpl, $model);
                     $count_find++;
                 }
             }
+
+            if($find==true){
+                $this->foreachDataToTpl($rows, $find, $count_find);
+            }
         }
+
+        unset($rows);
+    }
+
+    public function foreachDataToTpl($rows, $find = false, $count_find = 0){
+        foreach($rows as $child) {
+
+            if($count_find==4){break;}
+
+            //если находим тек. док. то даём флаг старта для формирования блоков перелинковки
+            if($child['id']==$this->model['id']){$find = true;continue;}
+
+            if(empty($child['tv_param'.$count_find])){ continue;}
+
+            //нашли тек. документ по очереди в выборке, теперь берём следующие за ним доки, чтоб сформировать блоки перелинковки
+            if($find==true){
+
+                $this->result.= str_replace('[+param+]', $this->replaceParamsInTemplate($child, $count_find, $child['tv_param'.$count_find]), $this->content_tpl);
+
+                $count_find++;
+            }
+        }
+    }
+
+    /*
+     * производим замену всех тв-параметров в шаблоне сниппета на их значения
+     */
+    public function replaceParamsInTemplate($child, $count_find, $param){
+
+        if(isset($child['tv_vendorcode'])){$param= str_replace('{*vendorcode*}', $child['tv_vendorcode'], $param);}else{$param= str_replace('{*vendorcode*}', '', $param); }
+
+        if(isset($child['tv_seria'])){$param= str_replace('{*seria*}', $child['tv_seria'], $param);}else{$param= str_replace('{*seria*}', '', $param); }
+
+        if(isset($child['tv_model'])){$param= str_replace('{*model*}', $child['tv_model'], $param);}else{$param= str_replace('{*model*}', '', $param); }
+
+        if(isset($child['tv_name'])){$param= str_replace('{*name*}', $child['tv_name'], $param);}else{$param= str_replace('{*name*}', '', $param); }
+
+        if(isset($child['tv_artikul'])){$param= str_replace('{*artikul*}', $child['tv_artikul'], $param);}else{$param= str_replace('{*artikul*}', '', $param); }
+
+        if(isset($child['tv_diametr'])){$param= str_replace('{*diametr*}', $child['tv_diametr'], $param);}else{$param= str_replace('{*diametr*}', '', $param); }
+
+        if(isset($child['tv_weight'])){$param= str_replace('{*weight*}', $child['tv_weight'], $param);}else{$param= str_replace('{*weight*}', '', $param); }
+
+        if(isset($child['tv_glubina'])){$param= str_replace('{*glubina*}', $child['tv_glubina'], $param);}else{$param= str_replace('{*glubina*}', '', $param); }
+
+        if(isset($child['tv_du'])){$param= str_replace('{*du*}', $child['tv_du'], $param);}else{$param= str_replace('{*du*}', '', $param); }
+
+        $param= str_replace(
+            ['<a>','{*pagetitle*}'],
+            ['<a href="'.Url::to(['/site/index','alias'=>$child['alias']]).'">',$child['pagetitle']],
+            $param);
+
+        return $param;
     }
 
     /*
@@ -136,6 +181,4 @@ class CrossLinks extends \app\components\Ditto{
             die('empty tpl in call string CROSSLink:'.$this->callString );
         }
     }
-
-    //public function parseChunk
-} 
+}
