@@ -32,19 +32,30 @@ class Phx extends \app\components\Ditto {
             //распарсим параметры конструкции-условия
             //echo 'callString='.$this->callString.'<br>';
             $this->rule_if_else();
+        }elseif(preg_match('/^\[\*(.*?):(.*?)`\*\]/mis', $this->callString)){
+            //случай вызова условия - [*price-place:is=``:then=``:else=`[*price-place*]`*]
+            //парсим строку и анализируем параметры
+            $this->rule_is_some_param();
         }
 
-        if(preg_match('/\[\*isfolder/i',$this->callString)){
-            $this->rule_is_folder();
-        }
+//        if(preg_match('/\[\*isfolder/i',$this->callString)){
+//            $this->rule_is_folder();
+//        }
     }
 
     /*
-     * определили вызов конструкции is_folder-обработка её параметров
+     * определили вызов конструкции ([*price-place:is=``:then=``:else=`[*price-place*]`*])-обработка её параметров
+     * т.е. вместо "price-place" может любой тв-параметр
      */
-    public function rule_is_folder(){
+    public function rule_is_some_param(){
 
-        //echo $this->callString.'<br>';
+        //сперва определим что за параметр идёт у нас первым в условии, а потом парсим условия(if_else)
+
+        preg_match('/^\[\*(.*?)\:is/', $this->callString, $matches_come_param);
+        //$matches_come_param[1] - некий тв-параметр, который используется в условии выражения
+        $some_param = str_replace(['[',']','`', ' '],'',$matches_come_param[1]);
+
+        //echo '<pre>'; print_r($matches_come_param); die($this->callString);
 
         //другой случай, когда вызов сниппета-[*isfolder:is=`1`:then=`wara<br>`:is=``:then=`CO`:else=`COM 350/ 03`+]
         $this->parseIfElseParams($this->callString);
@@ -59,8 +70,13 @@ class Phx extends \app\components\Ditto {
             $this->then= $this->parseValue($then_list[1]);
         }
 
-        if((string)$this->model['isfolder']==$this->is){
-            $this->result = $this->then;
+        if(isset($this->model[$some_param])){
+            if((string)$this->model[$some_param]==$this->is){
+                $this->result = $this->then;
+            }else{
+                //проверим существования условия на ELSE
+                $this->result = $this->else;
+            }
         }else{
             //проверим существования условия на ELSE
             $this->result = $this->else;

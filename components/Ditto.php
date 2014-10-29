@@ -191,10 +191,6 @@ class Ditto {
             foreach($list as $id){
                 $query->andWhere(['id' => (int)$id]);
             }
-//            $query->where([
-//                'id' => $list,
-//            ]);
-
 
         }elseif(!empty($this->startID)){
             //если указан начальный документ, который будет стартом для выборки доков

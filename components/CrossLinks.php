@@ -30,11 +30,7 @@ class CrossLinks extends \app\components\Ditto{
         */
     public function parseString(){
 
-        //echo $this->callString.'<br>';//die();
-
         $this->callString = str_replace('GlobalDitto2?', '', $this->callString);
-
-        //echo $this->callString.'<br>';
 
         //получаем массив параметров для вызова обработки
         $params_list = explode('&', $this->callString);
@@ -46,8 +42,6 @@ class CrossLinks extends \app\components\Ditto{
                 $param = str_replace(array('&','amp;','!]',']]','[!','[['), '', $param);
 
                 $expl_list = explode('=',$param);
-
-                //echo '<pre>'; print_r($expl_list);
 
                 $this->{$expl_list[0]} = trim(str_replace(array('`'),'',$matches[1]));
             }
@@ -71,23 +65,12 @@ class CrossLinks extends \app\components\Ditto{
 
         // compose the query
         $query->from(Content::collectionName())
-            //->where((array)['and', 'parent'=>(int)$this->model['parent'], ['or', 'tv_param1!=""', 'tv_param2!=""', 'tv_param3!=""']]);
-            //->where(['not in', ['tv_param1'=>'""'], ['tv_param2' => '""'], ['tv_param3' => '""'] ])
-            ->Where(['parent'=>(int)$this->model['parent']])
-//            ->andWhere(['not in', 'tv_param1', '""'])
-//            ->andWhere(['not in', 'tv_param2', '""'])
-//            ->andWhere(['not in', 'tv_param3', '""'])
-            ;
-//            ->orFilterWhere(['not in', 'tv_param1', '""'])
-//            ->orFilterWhere(['not in', 'tv_param2', '""'])
-//            ->orFilterWhere(['not in','tv_param3', '""']);
-        //$query->limit(4);
-
-        //echo '<pre>'; print_r($query); die();
+            ->where(['parent'=>(int)$this->model['parent']])
+            ->andWhere(['not in', 'tv_param1', ''])
+            ->andWhere(['not in', 'tv_param2', ''])
+            ->andWhere(['not in', 'tv_param3', '']);
 
         $rows = $query->all();
-
-        //echo '<pre>'; print_r($rows); die();
 
         $find = false;
 

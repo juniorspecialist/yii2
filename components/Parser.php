@@ -64,6 +64,8 @@ class Parser {
 
         $this->parseChunk();
 
+        //die($this->html);
+
         $this->parseSnippet();
 
         //проверим надо ли запускать чанки,сниппеты и т.д. по странице
@@ -77,16 +79,15 @@ class Parser {
      */
     public function parseSnippet(){
 
-        //die('snippet');
+        $this->parseMetaTagsPage();
+
+        //die($this->html);
 
          //preg_match_all('/\[(\[|\!|\+phx)(.*?)(\!|\+|\])\]/mis', $this->html, $matches);
         preg_match_all('/\[(\[|\!)(.*?)(\!|\])\]/mis', $this->html, $matches);
-        //die($this->html);
 
         //определяем вызовы PHX сниппета
         preg_match_all('/\[\+phx(.*?)\+\]/mis', $this->html, $matches_phx);
-
-        //echo '<pre>'; print_r($matches_phx);
 
         if(!empty($matches_phx[0])){
             foreach($matches_phx[0] as $phx_rule){
@@ -94,29 +95,40 @@ class Parser {
             }
         }
 
+        //echo '<pre>'; print_r($matches[0]); //die();
+
         //отлавливаем PHX - isFolder - и добавим в список найденных снипетов
         preg_match('/\[(\*isfolder)(.*?)(`\*)\]/mis', $this->html, $isFolder);
         if(!empty($isFolder[0])){
-            //echo '<pre>'; print_r($isFolder[0]); die();
-            //foreach($isFolder[0] as $isFolderRule){
-                $matches[0][] = $isFolder[0];
-            //}
+            $matches[0][] = $isFolder[0];
         }
 
-        $matches_main = array();
+//        preg_match_all('/\[(\*\w)(.*?)(`\*)\]/mis', $this->html, $isParam);
+//        if(!empty($isParam[0])){
+//            //$matches[0][] = $isFolder[0];
+//            echo '<pre>'; print_r($isParam); die();
+//        }
 
-        //echo '<pre>'; print_r($matches[0]); //die('snippet');
+
+
+        /*
+         * <h1>[*h1*]</h1>
+[*price-place:is=``:then=``:else=`[*price-place*]`*]
+[*price-place-extra:is=``:then=``:else=`<button type="button" class="btn btn-block btn-info btn-large"  data-toggle="collapse" data-target="#prices">Полный прайс-лист <i class="icon-chevron-down icon-white"></i></button>
+<div id="prices" class="collapse out">[*price-place-extra*]</div>`*]
+[*content*]
+         */
+        $matches_main = array();
 
         $replace = array();
         foreach($matches[0] as $index=>$snippet){
+
+            //echo 'snippet='.$snippet.'<br>';
 
             $replace[] = Parser::mergeSnippet($snippet, $this->model);//
 
             $matches_main[] = $matches[0][$index];
         }
-
-//        echo '<pre>'; print_r($replace);
-//        echo '<pre>'; print_r($matches_main); die();
 
         $this->html = str_replace($matches_main, $replace, $this->html);
 
@@ -131,20 +143,19 @@ class Parser {
      */
     static function mergeSnippet($html, $model){
 
-        $replace = '';//результат работы сниппета
-
         //echo 'html='.$html.'<br>';
+
+        $replace = '';//результат работы сниппета
 
         //нашли вызов сниппета - PHX
         if(preg_match('/(.*?):(.*?)/',$html)){
+
+            //echo 'phx='.$html.'<br>';
 
             $phx = new \app\components\Phx($model,$html);
             $phx->html = $html;
             $phx->action();
             $replace =  $phx->result;
-
-            //echo 'result_phx='.$replace.'<br>';
-            //die('phx');
         }
 
         //ищем вызов сниппет
@@ -163,7 +174,6 @@ class Parser {
             $wayfinder->parseString();
             //запишим на страницу результат работы сниппета
             $replace = $wayfinder->result;
-            //die('replace='.$replace);
         }
 
         //нашли вызов сниппета - Хлебные крошки
@@ -171,10 +181,7 @@ class Parser {
             $breadcrumbs = new \app\components\Breadcrumbs($model);
             //$matches_main[] = $matches[0][$index];
             $replace = $breadcrumbs->run();
-            //die($replace);
         }
-
-        //[*isfolder:is=`1`:then=`
 
         //вызов сниппета(TvTagCloud) - для тегирования по тв-параметру
 //        if(preg_match('/(\W|^)TvTagCloud(\W|$)/i',$html)){
@@ -193,8 +200,6 @@ class Parser {
             $cross_link->parseString();
             $cross_link->action();
             $replace =  $cross_link->result;
-            //echo 'replace='.$replace.'<br>';
-            //die($html);
         }
 
         return $replace;//возвращаем результат работы сниппета
@@ -204,15 +209,35 @@ class Parser {
      * проставляем мета-теги, заголовок страницы, ключевые слова и т.д.
      */
     public function parseMetaTagsPage(){
-        //[*pagetitle*]
 
-        //$this->model =  (array) $this->model;
+        //парсим хитрые PHX-условия
+        //обработка вызовов PHX условий с произвольными полями для условия
+        /*
+         * [*price-place:is=``:then=``:else=`[*price-place*]`*] [*price-place-extra:is=``:then=``:else=`Полный прайс-лист [*price-place-extra*]`*]
+         */
 
-        if (preg_match_all('~\[(\*|\+)(.*?)(\*|\+)\]~', $this->html, $matches)) {
-           //echo '<pre>'; print_r($this->model);//die();
-            ///$param = 'ditto-place';
-            ///die();
+        if (preg_match_all('/^\[\*(.*?):(.*?)`\*\]/mis', $this->html, $matches_phx)) {
+            //$matches_phx[0] - массив строк совпадений
+            if(!empty($matches_phx[0])){
+                foreach($matches_phx[0] as $phx_snippet_call_string){
+                    $phx = new \app\components\Phx($this->model,$phx_snippet_call_string);
+                    $phx->html = $phx_snippet_call_string;
+                    $phx->action();
+                    $replace =  $phx->result;
+                    $this->html = str_replace($phx_snippet_call_string, $replace, $this->html);
+                }
+            }
+        }
+
+
+        if (preg_match_all('~\[(\*|\+)(.*?)(`\*|\*|\+)\]~', $this->html, $matches)) {
+
             foreach($matches[2] as $param){
+
+                //отфильтровываем мета-теги в которых встречаются PHX условия
+                if(preg_match('/(:is=|:else|:then)/', $param)){
+                    continue;
+                }
 
                 //заменяем вызов чанка его содержимым
                 $replaced = false;
@@ -223,7 +248,6 @@ class Parser {
                     //заменяем вызов чанка его содержимым
                     if(!empty($this->model[$param])){
                         $replaced = true;
-                        //if($param=='name'){var_dump($replaced);die($this->html);}
                         $this->html = str_replace(array('[*'.$param.'*]', '[+'.$param.'+]'), $this->model[$param], $this->html);
                     }
 
@@ -248,8 +272,7 @@ class Parser {
         //заглушка - заменяем значения некоторых параметров
         $this->html = str_replace('<base href="[(site_url)]" />', '<base href="'.Url::to().'" />', $this->html);
         $this->html = str_replace('[*canonical*]', '', $this->html);
-
-        //$this->html = preg_replace('/\[\*\w\*\]/', '', $this->html);
+        $this->html = str_replace('[*pagetitle*]', $this->model['pagetitle'], $this->html);
     }
 
     /*
@@ -264,15 +287,10 @@ class Parser {
         if (preg_match_all('~{{(.*?)}}~', $this->html, $matches)) {
 
             foreach($matches[1] as $title_chunk){
-
-                //echo $title_chunk.'<br>';
-
                 //заменяем вызов чанка его содержимым
                 $matches_main[] = '{{'.$title_chunk.'}}';
                 $replace[] = \app\models\Chunk::findChunkByName($title_chunk);
             }
-
-            //echo '===============================<br>';
 
             //вызов чанков заменяем их значениями
             $this->html = str_replace($matches_main, $replace, $this->html);
@@ -356,7 +374,6 @@ class Parser {
         $replace= array ();
         $matches= array ();
         if (preg_match_all('~{{(.*?)}}~', $html, $matches)) {
-            //echo '<pre>'; print_r($matches);
             foreach($matches[1] as $title_chunk){
                 //заменяем вызов чанка его содержимым
                 $html = str_replace('{{'.$title_chunk.'}}', \app\models\Chunk::findChunkByName($title_chunk), $html);
