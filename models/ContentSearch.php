@@ -50,13 +50,14 @@ class ContentSearch extends Content
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['like', '_id', $this->_id])
-            ->andFilterWhere(['like', 'id', (int)$this->id])
+        if($this->id!=0){
+            $query->andFilterWhere(['in','id', (int)$this->id]);
+        }
 
-            ->andFilterWhere(['like', 'contentType', $this->contentType])
+        $query->andFilterWhere(['like', 'contentType', $this->contentType])
             ->andFilterWhere(['like', 'pagetitle', $this->pagetitle])
             ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'alias', (string)$this->alias])
+            ->andFilterWhere(['like', 'alias', $this->alias])
             ->andFilterWhere(['like', 'published', $this->published])
             ->andFilterWhere(['like', 'pub_date', $this->pub_date])
             ->andFilterWhere(['like', 'content', $this->content])

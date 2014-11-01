@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use yii\mongodb\Query;
 use yii\data\ActiveDataProvider;
 use app\models\Template;
 
@@ -51,10 +52,11 @@ class TemplateSearch extends Template
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['like', '_id', $this->_id])
-            ->andFilterWhere(['like', 'id', $this->id])
-            ->andFilterWhere(['like', 'templatename', $this->templatename])
-            ->andFilterWhere(['like', 'description', $this->description]);
+        if($this->id!=0){
+            $query->andFilterWhere(['in','id', (int)$this->id]);
+        }
+
+        $query->andFilterWhere(['like', 'templatename', $this->templatename]);
 
         return $dataProvider;
     }

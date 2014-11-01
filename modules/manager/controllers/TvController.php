@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TvController implements the CRUD actions for Tv model.
  */
-class TvController extends Controller
+class TvController extends ContentBaseController
 {
     public function behaviors()
     {

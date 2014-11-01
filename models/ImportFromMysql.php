@@ -68,7 +68,7 @@ class ImportFromMysql {
         //$this->importChunk();
 
         //импортируем шаблоны
-        $this->importTemplate();
+        //$this->importTemplate();
 
     }
 

@@ -12,9 +12,10 @@ use yii\filters\VerbFilter;
 /**
  * ContentController implements the CRUD actions for Content model.
  */
-class ContentController extends Controller
+class ContentController extends ContentBaseController
 {
 
+    //public $layout = 'manager_content';
 
     public function behaviors()
     {

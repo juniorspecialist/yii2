@@ -15,11 +15,19 @@ use yii\helpers\Url;
 
 class Wayfinder extends  \app\components\Ditto{
 
-    public $hideSubMenus;// скрывать или нет суб-меню
-    public $outerClass;//класс для CSS меню
+    //Скрывать подменю и выводить для активного пункта(Значение по умолчанию: 0)
+    public $hideSubMenus = 0;// скрывать или нет суб-меню(т.е. по текущ. доку будет выборка и это будет подменю)
+    public $outerClass;//класс для CSS меню(CSS-класс для контейнера меню)
     public $startId;//ID страницы с которой будем выбирать дочерние страницы
     public $sortBy;//по какому параметру сортировать
     public $sortDir;//направление сортировки
+
+    public $level = 0;// Количество уровней в меню(по умолчанию: 0)(0 - показывать все уровни)
+
+
+    public $innerClass = '';//CSS-класс для подпунктов меню(Формат: название CSS класса)
+
+    public $current_level = 0;//счётчик уровней вложенности меню
 
 
     /*
@@ -69,33 +77,109 @@ class Wayfinder extends  \app\components\Ditto{
 
         $this->result = '<ul class="'.$this->outerClass.'">';
 
-
-        //echo '<pre>'; print_r($rows);
-
         if(!empty($rows)){
             foreach($rows as $model) {
-                //<a href="/portfolio.html" title="Наши клиенты">Клиенты</a>.
-                //http://modx/[(site_url)]?r=site/index&alias=produkcija_bofill
+
+                $current_item = false;//текущий элемент меню
+
                 $class = '';// class="active"
 
                 //выделим текущую страницу в списке меню
                 if(Url::to()==Url::toRoute(['/site/index', 'alias'=>$model['alias']])){
+                    $current_item = true;
                     $class = 'class="active" ';
                 }else{
                     if(is_array($this->model)){
                         if($model['id']==$this->model['parent']){//выделим родительскую страницу в меню
                             $class = 'class="active" ';
+                            $current_item = true;
                         }
                     }else{
                         if($model['id']==$this->model->parent){//выделим родительскую страницу в меню
                                 $class = 'class="active" ';
+                                $current_item = true;
                             }
                         }
                 }
 
-                $this->result.='<li '.$class.' >'.Html::a($model['menutitle'],Url::toRoute(['/site/index', 'alias'=>$model['alias']]), array('title'=>$model['pagetitle'])).'</li>';
+                $this->result.='<li '.$class.' >'.Html::a($model['menutitle'],Url::toRoute(['/site/index', 'alias'=>$model['alias']]), ['title'=>$model['pagetitle']]).'</li>';
+
+
+                //значит неограниченное кол-во вложенностей уровней меню
+                if($this->level==0){$this->level = 100;}
+
+                //формирование подменю
+                $this->sub_item_menu($model['id'], $current_item);
             }
+
+            unset($rows);
+
             $this->result.= '</ul>';
+        }
+    }
+
+    /*
+     * строим подменю для указанного ID-документа
+     */
+    public function  sub_item_menu($doc_id, $current_item){
+
+        //если надо выводим подменю по текущему выделенному пункту меню
+        if($current_item && $this->level!==0 && $this->current_level<$this->level){
+
+            if($this->hideSubMenus==1 || $this->hideSubMenus==true){
+
+                $this->result.= '<ul class="'.$this->innerClass.'">';
+
+                $query_sub_menu = new Query;
+                // compose the query
+                $query_sub_menu->select(['menutitle', 'id','pagetitle', 'alias'])
+                    ->from(Content::collectionName())
+                    ->where(['parent'=>(int)$doc_id])
+                    ->andWhere(['not in', 'menutitle', '']);
+                $query_sub_menu->orderBy('menutitle');
+
+                // execute the query
+                $rows_sub_menu = $query_sub_menu->all();
+                if($rows_sub_menu){
+                    foreach($rows_sub_menu as $sub_item){
+
+                        $class = '';
+
+                        $current_item = false;//текущий элемент меню
+
+                        //выделим текущую страницу в списке меню
+                        if(Url::to()==Url::toRoute(['/site/index', 'alias'=>$sub_item['alias']])){
+                            $current_item = true;
+                            $class = 'class="active" ';
+                        }else{
+                            if(is_array($this->model)){
+                                if($sub_item['id']==$this->model['parent']){//выделим родительскую страницу в меню
+                                    $class = 'class="active" ';
+                                    $current_item = true;
+                                }
+                            }else{
+                                if($sub_item['id']==$this->model->parent){//выделим родительскую страницу в меню
+                                    $class = 'class="active" ';
+                                    $current_item = true;
+                                }
+                            }
+                        }
+
+                        $this->result.='<li '.$class.' >'.Html::a('<i class="icon-cog"></i>'.$sub_item['menutitle'],Url::toRoute(['/site/index', 'alias'=>$sub_item['alias']]), ['title'=>$sub_item['pagetitle']]).'</li>';
+
+                        $this->sub_item_menu($sub_item['id'],$current_item);
+
+                    }
+                }
+
+
+                unset($rows_sub_menu);
+
+                $this->result.= '</ul>';
+
+                $this->current_level++;//увеличили счётчик уровней вложенности меню
+
+            }
         }
     }
 }

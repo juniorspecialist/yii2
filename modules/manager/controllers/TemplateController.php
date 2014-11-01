@@ -13,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * TemplateController implements the CRUD actions for Template model.
  */
-class TemplateController extends Controller
+class TemplateController extends ContentBaseController
 {
     public function behaviors()
     {

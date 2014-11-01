@@ -39,6 +39,16 @@ AppAsset::register($this);
                     ['label' => 'Шаблоны', 'url' => \yii\helpers\Url::toRoute(['/manager/template/'])],
                     ['label' => 'Чанки', 'url' => \yii\helpers\Url::toRoute(['/manager/chunk/'])],
                     ['label' => 'ТВ-параметры', 'url' => \yii\helpers\Url::toRoute(['/manager/tv/'])],
+
+                    [
+                        'label' => 'Модули',
+                        'items' => [
+                            ['label' => 'Импорт', 'url' => '#'],
+                            '<li class="divider"></li>',
+                            '<!--<li class="dropdown-header">Экспорт</li>-->',
+                            ['label' => 'Экспорт', 'url' => '#'],
+                        ],
+                    ],
                     /*Yii::$app->user->isGuest ?
                         ['label' => 'Login', 'url' => ['/site/login']] :
                         ['label' => 'Logout (' . Yii::$app->user->identity->username . ')',

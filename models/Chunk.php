@@ -80,7 +80,7 @@ class Chunk extends \yii\mongodb\ActiveRecord
             //если НЕ нашли значение в КЕШЕ, значит делаем поиск в БД и заносим значение в кеш
             $query = new Query;
 
-            $row = $query->select(['content'])->from('Chunk')->where(array('title'=>$nameChunk))->one();
+            $row = $query->select(['content'])->from('Chunk')->where(['title'=>$nameChunk])->one();
 
             //запишим в КЕШ значение чанка
             Yii::$app->cache->set(Chunk::cache_prefix.$nameChunk, $row['content']);

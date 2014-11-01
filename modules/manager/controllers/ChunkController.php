@@ -15,7 +15,7 @@ use yii\filters\VerbFilter;
 /**
  * ChunkController implements the CRUD actions for Chunk model.
  */
-class ChunkController extends Controller
+class ChunkController extends ContentBaseController
 {
     public function behaviors()
     {

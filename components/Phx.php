@@ -37,10 +37,6 @@ class Phx extends \app\components\Ditto {
             //парсим строку и анализируем параметры
             $this->rule_is_some_param();
         }
-
-//        if(preg_match('/\[\*isfolder/i',$this->callString)){
-//            $this->rule_is_folder();
-//        }
     }
 
     /*
