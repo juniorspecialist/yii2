@@ -72,4 +72,14 @@ class Template extends \yii\mongodb\ActiveRecord
             'locked'=>'Заблокирован',
         ];
     }
+
+
+    /*
+     * получаем список шаблонов
+     */
+    public static function getTplList(){
+        $query = new Query();
+        $query->select(['id','templatename'])->from(Template::className());
+        return $query->all();
+    }
 }

@@ -14,6 +14,12 @@ use app\assets\AppAsset;
 
 yii\bootstrap\BootstrapAsset::register($this);
 yii\web\AssetBundle::register($this);
+
+
+//\Yii::$app->assetManager->publish(\Yii::$app->basePath) . '/assets/js/jquery.treeview.js');
+//\Yii::$app->assetManager->publish(\Yii::$app->basePath) . '/assets/js/jquery.treeview.async.js');
+//\Yii::$app->assetManager->publish(\Yii::$app->basePath) . '/assets/js/jquery.treeview.edit.js');
+//\Yii::$app->assetManager->publish(\Yii::$app->basePath . '/assets/js/tree_initial.js');
 ?>
 
 

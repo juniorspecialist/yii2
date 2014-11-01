@@ -3,6 +3,11 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
+use yii\helpers\Url;
+use yii\helpers\Html;
+use yii\mongodb\Query;
 
 /**
  * This is the model class for collection "Content".
@@ -142,4 +147,30 @@ class Content extends \yii\mongodb\ActiveRecord
     public function getPrimaryKey($asArray = false){
         return $this->id;
     }
+
+    /*
+     * получаем список элементов дерева по PARENT
+     */
+    public static function getNode($parent_id=0){
+        $query = new Query();
+        $query->select(['id','pagetitle','alias', 'isfolder']);
+        $query->from(Content::collectionName());
+        $query->where(['parent'=>(int)$parent_id]);
+        $nodes = $query->all();
+
+        $tree = [];
+
+        if($nodes){
+           foreach($nodes as $node){
+               $tree[] =[
+                   'text'=>Html::a($node['pagetitle'], Url::toRoute(['/manager/content/update/', 'id'=>(string)$node['_id']]), ['title'=>$node['pagetitle'],'target'=>'main']),
+                   'id'=>$node['id'],
+                   'hasChildren'=>$node['isfolder']==0 ? false : true,
+               ];
+           }
+        }
+
+        return json_encode($tree);
+    }
+
 }

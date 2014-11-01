@@ -15,7 +15,7 @@ use yii\mongodb\Query;
 class SiteController extends Controller
 {
 
-    //public $layout = 'clean';
+    public $layout = 'clean';
 
     public function behaviors()
     {

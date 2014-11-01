@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
+//use yii\jui\DatePicker;
 /* @var $this yii\web\View */
 /* @var $model app\models\Content */
 /* @var $form yii\widgets\ActiveForm */
@@ -19,19 +19,28 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'pagetitle') ?>
 
-    <?= $form->field($model, 'description') ?>
+    <?= $form->field($model, 'description')->textarea(['cols'=>5, 'rows'=>5]) ?>
 
     <?= $form->field($model, 'alias') ?>
 
-    <?= $form->field($model, 'published') ?>
+    <?= $form->field($model, 'published')->checkbox() ?>
 
-    <?= $form->field($model, 'pub_date') ?>
+    <?=$form->field($model, 'pub_date')?>
+
+<!--    --><?//= DatePicker::widget([
+//        'model' => $model,
+//        'attribute' => 'pub_date',
+//        'language' => 'ru',
+//        'clientOptions' => [
+//            'dateFormat' => 'yy-mm-dd',
+//        ],
+//    ]) ?>
 
     <?= $form->field($model, 'content') ?>
 
     <?= $form->field($model, 'isfolder') ?>
 
-    <?= $form->field($model, 'template') ?>
+    <?= $form->field($model, 'template')->dropDownList(\app\models\Template::getTplList()) ?>
 
     <?= $form->field($model, 'menuindex') ?>
 

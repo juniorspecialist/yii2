@@ -15,10 +15,7 @@ $config = [
     'defaultRoute' => 'site/index',
 
     'modules' => [
-        'debug' => 'yii\debug\Module',
-        // ...
-
-        //'jstree' => 'yii\jstree\Module',
+        //'debug' => 'yii\debug\Module',
 
         'gii' => [
             'class' => 'yii\gii\Module',
@@ -42,10 +39,9 @@ $config = [
 
         'assetManager' => [
 
-            'assetMap' => [
-                'jquery.js' => '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js',
-                //'jstree' => '/js/bootstrap-modal.js',
-            ],
+//            'assetMap' => [
+//                'jquery.js' => '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js',
+//            ],
 
             'class'=>'yii\web\AssetManager',
             'linkAssets'=>true,
@@ -54,9 +50,7 @@ $config = [
                 'yii\web\JqueryAsset' => [
                     'sourcePath' => null,   // do not publish the bundle
                     'js' => [
-                        //'//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',
-                        'jquery.js',
-                        'assets/js/bootstrap-modal.js',
+                        '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js',
                         'assets/js/jquery.treeview.js',
                         'assets/js/jquery.treeview.async.js',
                         'assets/js/jquery.treeview.edit.js',
@@ -141,8 +135,8 @@ $config = [
 
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'debug';
-    $config['modules']['debug'] = 'yii\debug\Module';
+    //$config['bootstrap'][] = 'debug';
+    //$config['modules']['debug'] = 'yii\debug\Module';
 
     //$config['bootstrap'][] = 'gii';
     //$config['modules']['gii'] = 'yii\gii\Module';

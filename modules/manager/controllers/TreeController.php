@@ -74,60 +74,16 @@ class TreeController extends Controller{
 
         $this->layout = 'clean';
 
-        //if ($_REQUEST['root'] == "source"){
+        //выводим список уровней - начального уровня(корень дерева)
+        if ($_REQUEST['root'] == "source"){
 
-        $my_data = array(
-            array(
-                'text'     => 'Node 1',
-                'expanded' => true, // будет развернута ветка или нет (по умолчанию)
-                'children' => array(
-                    array(
-                        'text'     => 'Node 1.1',
-                        'expanded' => false, // будет развернута ветка или нет (по умолчанию)
-                        'children' => array(
-                            array(
-                                'text'     => 'Node 1.1.1',
-                            ),
-                        )
-                    ),
-                    array(
-                        'text'     => 'Node 1.2',
-                        'expanded' => true,
-                        'children' => array(
-                            array(
-                                'text'     => 'Node 1.2.1',
-                                'expanded' => true,
-                                'children' => array(
-                                    array(
-                                        'text'     => 'Node 1.2.2.1',
-                                        'expanded' => true,
-                                        'children' => array(
-                                            array(
-                                                'text'     => 'Node 1.2.2.1.1',
-                                            ),
-                                        )
-                                    ),
-                                )
-                            ),
-                        )
-                    ),
-                    array(
-                        'text'     => 'Node 1.3',
-                        'expanded' => true,
-                        'children' => array(
-                            array(
-                                'text'     => 'Node 1.3.1',
-                            ),
-                        )
-                    ),
-                )
-            ),
-        );
+            $data = Content::getNode();
 
-        //    return json_encode($data);
-        return $this->render('node', ['data'=>$my_data]);
-            //Yii::$app->end();
-        //}
+        }else{
 
+            $data = Content::getNode($_REQUEST['root']);
+        }
+
+        echo  $data;
     }
 } 
