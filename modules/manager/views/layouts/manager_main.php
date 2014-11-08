@@ -47,15 +47,17 @@ yii\web\AssetBundle::register($this);
             ['label' => 'Шаблоны', 'url' => \yii\helpers\Url::toRoute(['/manager/template/']),'linkOptions' => ['target'=>'main']],
             ['label' => 'Чанки', 'url' => \yii\helpers\Url::toRoute(['/manager/chunk/']),'linkOptions' => ['target'=>'main']],
             ['label' => 'ТВ-параметры', 'url' => \yii\helpers\Url::toRoute(['/manager/tv/']),'linkOptions' => ['target'=>'main']],
+            ['label' => 'Настройки', 'url' => \yii\helpers\Url::toRoute(['/manager/config/']),'linkOptions' => ['target'=>'main']],
 
-//            [
-//                'label' => 'Модули',
-//                'items' => [
-//                    ['label' => 'Импорт', 'url' => '#','linkOptions' => ['target'=>'main']],
-//                    '<li class="divider"></li>',
-//                    ['label' => 'Экспорт', 'url' => '#','linkOptions' => ['target'=>'main']],
-//                ],
-//            ],
+
+            [
+                'label' => 'Модули',
+                'items' => [
+                    ['label' => 'Импорт', 'url' => '#','linkOptions' => ['target'=>'main']],
+                    '<li class="divider"></li>',
+                    ['label' => 'Экспорт', 'url' => '#','linkOptions' => ['target'=>'main']],
+                ],
+            ],
 
             /*Yii::$app->user->isGuest ?
                 ['label' => 'Login', 'url' => ['/site/login']] :
@@ -70,7 +72,7 @@ yii\web\AssetBundle::register($this);
 
     <div class="container1" style="border: 1px solid #008000; margin-top: 50px">
 
-        <iframe id="tree_iframe" name="all" src="/manager/tree/tree" scrolling="yes" frameborder="0" style="border: 1px solid red;margin-left:5px;height: 950px; width: 20%;"></iframe>
+        <iframe id="tree_iframe" name="all" src="/manager/tree/tree" scrolling="yes" frameborder="0" style="margin-left:5px;height: 950px; width: 20%;"></iframe>
 
         <iframe id="main_frame" name="main" src="/manager/content/" scrolling="yes" frameborder="0" style="float: right; margin-left:0px;height: 950px; min-width: 79%; width: auto"></iframe>
 

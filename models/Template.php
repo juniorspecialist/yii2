@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\mongodb\Query;
 use yii\caching\Cache;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for collection "Template".
@@ -78,8 +79,15 @@ class Template extends \yii\mongodb\ActiveRecord
      * получаем список шаблонов
      */
     public static function getTplList(){
+
         $query = new Query();
-        $query->select(['id','templatename'])->from(Template::className());
-        return $query->all();
+
+        $query->select(['id','templatename'])->from('Template');
+
+        $query->orderBy('templatename asc');
+
+        $tpls = $query->all();
+
+        return ArrayHelper::map($tpls, 'id', 'templatename');
     }
 }

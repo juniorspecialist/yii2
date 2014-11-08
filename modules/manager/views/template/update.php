@@ -6,9 +6,9 @@ use yii\helpers\Html;
 /* @var $model app\models\Template */
 
 $this->title = 'Редактирование шаблона: ' . ' ' . $model->templatename;
-$this->params['breadcrumbs'][] = ['label' => 'Templates', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->templatename, 'url' => ['view', 'id' => (string)$model->_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = ['label' => 'Шаблоны', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->templatename];
+$this->params['breadcrumbs'][] = 'Редактировать';
 ?>
 <div class="template-update">
 

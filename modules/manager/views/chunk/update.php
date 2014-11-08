@@ -7,8 +7,8 @@ use yii\helpers\Html;
 
 $this->title = 'Редактирование чанка: ' . ' ' . $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Чанки', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => (string)$model->_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = ['label' => $model->title];
+$this->params['breadcrumbs'][] = 'Редактирование';
 ?>
 <div class="chunk-update">
 

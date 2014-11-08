@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\TvSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Tvs';
+$this->title = 'ТВ-параметры';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tv-index">
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Tv', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать тв-параметр', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -25,15 +25,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            '_id',
-            'type',
+            //'_id',
+            //'type',
+            //'id',
             'name',
             'caption',
-            'description',
+            //'description',
             // 'elements',
             // 'default_text',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn','template'=>'{update}'],
         ],
     ]); ?>
 

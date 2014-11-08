@@ -20,9 +20,15 @@ function initTrees() {
     });
 }
 $(document).ready(function(){
-    initTrees();
-    $("#refresh").click(function() {
-        $("#mixed").empty();
+
+    //проверим наличие блока для отображения дерева
+    if($("#mixed").length>0) {
         initTrees();
-    });
+        $("#refresh").click(function() {
+            $("#mixed").empty();
+            initTrees();
+        });
+    }
+
+
 });

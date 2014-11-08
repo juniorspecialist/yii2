@@ -8,6 +8,8 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\mongodb\Query;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\SluggableBehavior;
 
 /**
  * This is the model class for collection "Content".
@@ -39,6 +41,10 @@ use yii\mongodb\Query;
  */
 class Content extends \yii\mongodb\ActiveRecord
 {
+
+//    public $pagetitle;
+//    public $alias;
+
     /**
      * @inheritdoc
      */
@@ -47,10 +53,40 @@ class Content extends \yii\mongodb\ActiveRecord
         return ['modx', 'Content'];
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'pagetitle',
+                 'slugAttribute' => 'alias',
+            ],
+
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    \yii\mongodb\ActiveRecord::EVENT_BEFORE_INSERT => ['createdby', 'editedby'],
+                    \yii\mongodb\ActiveRecord::EVENT_BEFORE_UPDATE => ['editedby'],
+                ],
+            ],
+        ];
+    }
+
+    /*
+     * связь документа с шаблоном
+     */
+
     public function getTpl()
     {
         // Order has_one Customer via Customer.id -> customer_id
         return $this->hasOne(Template::className(), ['id' => 'template']);
+    }
+
+    /*
+     *связь с родителем документа
+     */
+    public function getParentcontent(){
+        return $this->hasOne(Content::className(), ['id' =>'parent']);
     }
 
     /**
@@ -91,10 +127,14 @@ class Content extends \yii\mongodb\ActiveRecord
     public function rules()
     {
         return [
-            ['id', 'required'],
-            ['id, parent', 'filter', 'filter' => 'intval'],
-            ['id', 'unique', 'targetClass' => Content::className(), 'message' => 'This id has already been taken.'],
-            ['alias', 'unique', 'targetClass' => Content::className(), 'message' => 'This alias has already been taken.'],
+            //[['username', 'password'], 'required'],
+            [['parent', 'pagetitle'], 'required'],
+            //['id, parent', 'filter', 'filter' => 'intval'],
+            [['pub_date'], 'default', 'value' => time()],
+            [['isfolder'], 'default', 'value' => 0],
+            [['cacheable','searchable'], 'default', 'value' => 1],
+            //['id', 'unique', 'targetClass' => Content::className(), 'message' => 'This id has already been taken.'],
+            ['alias', 'unique', 'targetClass' => Content::className(), 'message' => 'Данный псевдоним уже существует.'],
             [['id',  'contentType', 'pagetitle', 'description', 'alias', 'published', 'pub_date', 'content', 'isfolder', 'template', 'menuindex', 'searchable', 'cacheable', 'createdby', 'createdon', 'editedby', 'deleted', 'publishedon', 'menutitle', 'hidemenu', 'parent', 'introtext'], 'safe']
         ];
     }
@@ -106,8 +146,8 @@ class Content extends \yii\mongodb\ActiveRecord
     {
         return [
             '_id' => 'ID',
-            'id' => 'Id',
-            'contentType' => 'Content Type',
+            'id' => 'ID',
+            'contentType' => 'Тип содержимого',
             'pagetitle' => 'Заголовок',
             'description' => 'Описание',
             'alias' => 'Псевдоним',
@@ -120,10 +160,10 @@ class Content extends \yii\mongodb\ActiveRecord
             'searchable' => 'Доступен для поиска',
             'cacheable' => 'Кешируемый',
             'createdby' => 'Создан',
-            'createdon' => 'Createdon',
-            'editedby' => 'Editedby',
+            'createdon' => 'Дата создания',
+            'editedby' => 'Дата редактирования',
             'deleted' => 'Удалён',
-            'publishedon' => 'Publishedon',
+            'publishedon' => 'Опубликован',
             'menutitle' => 'Пункт меню',
             'hidemenu' => 'Показывать в меню',
             'parent' => 'Родитель',
@@ -163,7 +203,7 @@ class Content extends \yii\mongodb\ActiveRecord
         if($nodes){
            foreach($nodes as $node){
                $tree[] =[
-                   'text'=>Html::a($node['pagetitle'], Url::toRoute(['/manager/content/update/', 'id'=>(string)$node['_id']]), ['title'=>$node['pagetitle'],'target'=>'main']),
+                   'text'=>Html::a($node['pagetitle'], Url::toRoute(['/manager/content/update/', 'id'=>(string)$node['_id']]), ['title'=>$node['pagetitle'],'target'=>'main', 'class'=>'node']),
                    'id'=>$node['id'],
                    'hasChildren'=>$node['isfolder']==0 ? false : true,
                ];
@@ -171,6 +211,25 @@ class Content extends \yii\mongodb\ActiveRecord
         }
 
         return json_encode($tree);
+    }
+
+
+
+    public function afterFind()
+    {
+        //работа с датами в документе
+        if($this->pub_date==0 || empty($this->pub_date)){
+            $this->pub_date = date('Y-m-d', time());
+        }
+
+//        $query = new Query();
+//        $query->select([$this->idFieldName, $this->keyFieldName, $this->valueFieldName]);
+//        $query->from($this->tableName);
+//        $query->where([$this->idFieldName => $this->owner->id]);
+//
+//        foreach ($query->all() as $property) {
+//            $this->_properties[$property[$this->keyFieldName]] = Json::decode($property[$this->valueFieldName]);
+//        }
     }
 
 }

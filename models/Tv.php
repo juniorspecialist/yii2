@@ -58,12 +58,18 @@ class Tv extends \yii\mongodb\ActiveRecord
     {
         return [
             '_id' => 'ID',
-            'type' => 'Type',
-            'name' => 'Name',
-            'caption' => 'Caption',
-            'description' => 'Description',
-            'elements' => 'Elements',
-            'default_text' => 'Default Text',
+            'type' => 'Тип',
+            'name' => 'Имя',
+            'caption' => 'Заголовок',
+            'description' => 'Описание',
+            'elements' => 'Элементы',
+            'default_text' => 'Значение по умолчанию',
+        ];
+    }
+
+    static function getTypesTvParams(){
+        return [
+
         ];
     }
 }

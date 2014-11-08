@@ -2,7 +2,18 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-//use yii\jui\DatePicker;
+
+
+
+
+use yii\bootstrap\Nav;
+use yii\bootstrap\Tabs;
+use yii\bootstrap\NavBar;
+use yii\widgets\Breadcrumbs;
+use app\assets\AppAsset;
+
+yii\bootstrap\BootstrapAsset::register($this);
+yii\web\AssetBundle::register($this);
 /* @var $this yii\web\View */
 /* @var $model app\models\Content */
 /* @var $form yii\widgets\ActiveForm */
@@ -12,63 +23,50 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id') ?>
-
-
-    <?= $form->field($model, 'contentType') ?>
-
-    <?= $form->field($model, 'pagetitle') ?>
-
-    <?= $form->field($model, 'description')->textarea(['cols'=>5, 'rows'=>5]) ?>
-
-    <?= $form->field($model, 'alias') ?>
-
-    <?= $form->field($model, 'published')->checkbox() ?>
-
-    <?=$form->field($model, 'pub_date')?>
-
-<!--    --><?//= DatePicker::widget([
-//        'model' => $model,
-//        'attribute' => 'pub_date',
-//        'language' => 'ru',
-//        'clientOptions' => [
-//            'dateFormat' => 'yy-mm-dd',
-//        ],
-//    ]) ?>
-
-    <?= $form->field($model, 'content') ?>
-
-    <?= $form->field($model, 'isfolder') ?>
-
-    <?= $form->field($model, 'template')->dropDownList(\app\models\Template::getTplList()) ?>
-
-    <?= $form->field($model, 'menuindex') ?>
-
-    <?= $form->field($model, 'searchable') ?>
-
-    <?= $form->field($model, 'cacheable') ?>
-
-    <?= $form->field($model, 'createdby') ?>
-
-    <?= $form->field($model, 'createdon') ?>
-
-    <?= $form->field($model, 'editedby') ?>
-
-    <?= $form->field($model, 'deleted') ?>
-
-    <?= $form->field($model, 'publishedon') ?>
-
-    <?= $form->field($model, 'menutitle') ?>
-
-    <?= $form->field($model, 'hidemenu') ?>
-
-    <?= $form->field($model, 'parent') ?>
-
-    <?= $form->field($model, 'introtext') ?>
-
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php
+        if(!$model->isNewRecord){
+            echo Html::a('Просмотр', \yii\helpers\Url::toRoute(['/site/index/', 'alias'=>$model->alias]),['class' =>'btn btn-success','target'=>'new_blank']);
+//            echo \yii\bootstrap\Button::widget([
+//                'label' => 'Просмотр',
+//                'href'=>\yii\helpers\Url::toRoute(['/site/index/', 'alias'=>$model->alias]),
+//                'options' => ['class' => 'btn btn-success',
+//                'target'=>'new_blank',
+//                ],
+//            ]);
+        }
+        ?>
     </div>
+
+    <h2><?= Html::encode($this->title) ?></h2>
+
+    <?php
+    echo Tabs::widget([
+        'items' => [
+            [
+                'label' => 'Общие',
+                'content' => $this->render('tab_main', ['model'=>$model, 'form'=>$form]),
+                'active' => true
+            ],
+            [
+                'label' => 'Настройки страницы',
+                'content' => $this->render('tab_config', ['model'=>$model, 'form'=>$form]),
+                //'headerOptions' => [...],
+                'options' => ['id' => 'tab_config'],
+            ],
+
+            [
+                'label' => 'Тв-параметры',
+                'content' => $this->render('tab_tv_params', ['model'=>$model, 'form'=>$form]),
+                //'headerOptions' => [...],
+                'options' => ['id' => 'tab_tv_params'],
+            ],
+        ],
+    ]);
+    ?>
+
+
 
     <?php ActiveForm::end(); ?>
 

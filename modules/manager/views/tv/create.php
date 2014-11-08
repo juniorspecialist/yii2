@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Tv */
 
-$this->title = 'Create Tv';
-$this->params['breadcrumbs'][] = ['label' => 'Tvs', 'url' => ['index']];
+$this->title = 'ТВ-параметры';
+$this->params['breadcrumbs'][] = ['label' => 'ТВ-параметры', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tv-create">

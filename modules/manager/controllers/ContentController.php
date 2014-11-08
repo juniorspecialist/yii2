@@ -2,6 +2,7 @@
 
 namespace app\modules\manager\controllers;
 
+use app\models\Template;
 use Yii;
 use app\models\Content;
 use app\models\ContentSearch;
@@ -94,9 +95,12 @@ class ContentController extends ContentBaseController
     {
         $model = $this->findModel($id);
 
+        Yii::$app->formatter->locale = 'ru-RU';
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => (string)$model->_id]);
         } else {
+
             return $this->render('update', [
                 'model' => $model,
             ]);

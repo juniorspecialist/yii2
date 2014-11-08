@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Chunk */
 
-$this->title = 'Create Chunk';
-$this->params['breadcrumbs'][] = ['label' => 'Chunks', 'url' => ['index']];
+$this->title = 'Создать чанк';
+$this->params['breadcrumbs'][] = ['label' => 'Чанки', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="chunk-create">

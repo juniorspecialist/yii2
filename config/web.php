@@ -12,6 +12,11 @@ $config = [
     'language'=>'ru-RU',
     'sourceLanguage'=>'en',
 
+
+//    'aliases' => [
+//        '@yii2-date-picker' => '@vendor/yii2-date-picker',
+//    ],
+
     'defaultRoute' => 'site/index',
 
     'modules' => [
@@ -37,6 +42,13 @@ $config = [
     ],
     'components' => [
 
+        'formatter' => [
+            'dateFormat' => 'dd.MM.yyyy',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => ' ',
+            //'currencyCode' => 'EUR',
+        ],
+
         'assetManager' => [
 
 //            'assetMap' => [
@@ -55,9 +67,11 @@ $config = [
                         'assets/js/jquery.treeview.async.js',
                         'assets/js/jquery.treeview.edit.js',
                         'assets/js/tree_initial.js',
+                        //'assets/js/jquery-ui.min.js',
                     ],
                     'css'=> [
-                        'assets/css/jquery.treeview.css'
+                        'assets/css/jquery.treeview.css',
+                        //'assets/css/jquery-ui.css'
                     ]
                 ],
             ],

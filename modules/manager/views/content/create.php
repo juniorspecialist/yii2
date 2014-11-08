@@ -7,12 +7,11 @@ use yii\helpers\Html;
 /* @var $model app\models\Content */
 
 $this->title = 'Создать ресурс';
-$this->params['breadcrumbs'][] = ['label' => 'Contents', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Ресурсы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="content-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

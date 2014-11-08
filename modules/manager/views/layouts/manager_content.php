@@ -32,6 +32,12 @@ yii\web\AssetBundle::register($this);
 
     <?php $this->beginBody() ?>
     <div class="wrap">
+
+        <?= Breadcrumbs::widget([
+            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+            'homeLink'=>false
+        ]) ?>
+
         <div class="container">
             <?= $content ?>
         </div>

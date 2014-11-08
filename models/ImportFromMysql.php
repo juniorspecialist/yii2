@@ -70,6 +70,9 @@ class ImportFromMysql {
         //импортируем шаблоны
         //$this->importTemplate();
 
+        //импорт тв-параметров
+        //$this->importTvParams();
+
     }
 
 
