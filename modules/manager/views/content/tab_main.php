@@ -24,6 +24,7 @@
 
 <?php
 
+/*
     echo $form->field($model, 'parent')->hiddenInput(['id'=>'parent_id']);
 
     if($model->isNewRecord){
@@ -33,7 +34,7 @@
         //echo $model->parentcontent->pagetitle.'<br>';
         echo \yii\helpers\Html::label('parent_field',($model->parentcontent->pagetitle==0)?'':$model->parentcontent->pagetitle, ['parent_field']);
     }
-
+*/
 
 
 

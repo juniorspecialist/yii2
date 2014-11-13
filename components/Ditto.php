@@ -42,6 +42,8 @@ class Ditto {
 
     public function __construct($model,$callString){
 
+
+
         $callString = Parser::mergeTvParamsContent($callString, $model);
 
         $this->model = $model;
@@ -207,9 +209,15 @@ class Ditto {
                     'parent' =>(int) $this->model['id'],
                 ]);
             }else{
-                $query->where([
-                    'parent' =>(int) $this->model->id,
-                ]);
+                if(is_array($this->model)){
+                    $query->where([
+                        'parent' =>(int) $this->model['id'],
+                    ]);
+                }else{
+                    $query->where([
+                        'parent' =>(int) $this->model->id,
+                    ]);
+                }
             }
 
         }
@@ -228,11 +236,15 @@ class Ditto {
 
         $query->orderBy('createdon desc');
 
+        //echo '<pre>'; print_r($query);
+
         $find = $query->all();
 
         foreach($find as $model) {
             $this->result.=Parser::mergeTvParamsContent($this->content_tpl, $model);
         }
+
+        //echo $this->result.'<br>';
     }
 
     /*

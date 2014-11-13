@@ -57,7 +57,7 @@ class ContentSearch extends Content
         $query->andFilterWhere(['like', 'contentType', $this->contentType])
             ->andFilterWhere(['like', 'pagetitle', $this->pagetitle])
             ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'alias', $this->alias])
+            ->andFilterWhere(['like', 'alias', (string)$this->alias])
             ->andFilterWhere(['like', 'published', $this->published])
             ->andFilterWhere(['like', 'pub_date', $this->pub_date])
             ->andFilterWhere(['like', 'content', $this->content])

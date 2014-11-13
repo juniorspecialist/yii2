@@ -160,11 +160,16 @@ class Parser {
 
         //ищем вызов сниппет
         if(preg_match('/(\W|^)Ditto(\W|$)/',$html)){
+
+            //echo $html.'<br>';
+
             $ditto = new \app\components\Ditto($model, $html);
             //разбираем параметры вызова сниппета - Дитто
             $ditto->parseString();
             //запишим на страницу результат работы сниппета
             $replace = $ditto->result;
+
+            //echo 'replace='.$replace.'<br>';
         }
         // ищем вызов сниппета - Wayfinder
 

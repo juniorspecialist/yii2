@@ -56,19 +56,19 @@ class Content extends \yii\mongodb\ActiveRecord
     public function behaviors()
     {
         return [
-            [
-                'class' => SluggableBehavior::className(),
-                'attribute' => 'pagetitle',
-                 'slugAttribute' => 'alias',
-            ],
+//            [
+//                'class' => SluggableBehavior::className(),
+//                'attribute' => 'pagetitle',
+//                 'slugAttribute' => 'alias',
+//            ],
 
-            [
-                'class' => TimestampBehavior::className(),
-                'attributes' => [
-                    \yii\mongodb\ActiveRecord::EVENT_BEFORE_INSERT => ['createdby', 'editedby'],
-                    \yii\mongodb\ActiveRecord::EVENT_BEFORE_UPDATE => ['editedby'],
-                ],
-            ],
+//            [
+//                'class' => TimestampBehavior::className(),
+//                'attributes' => [
+//                    \yii\mongodb\ActiveRecord::EVENT_BEFORE_INSERT => ['createdby', 'editedby'],
+//                    \yii\mongodb\ActiveRecord::EVENT_BEFORE_UPDATE => ['editedby'],
+//                ],
+//            ],
         ];
     }
 
