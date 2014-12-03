@@ -18,6 +18,9 @@ use app\models\Content;
 use yii\mongodb\Query;
 use yii\helpers\Url;
 
+use yii\helpers\Html;
+
+
 class TvTagCloud extends \app\components\Ditto{
 
     //параметры работы сниппета
@@ -31,6 +34,8 @@ class TvTagCloud extends \app\components\Ditto{
 
     //глубина просмотра
     public $depth = 10;
+
+    public $template;//ID шаблона по которому будем фильтровать документы для более быстрой выборки
 
     //ID документа, где расположен вызов Ditto
     public $landing;
@@ -56,12 +61,8 @@ class TvTagCloud extends \app\components\Ditto{
 
     public function __construct($model,$callString){
 
-        $this->model = $model;
+        $this->model = $model;// это массив
         $this->callString = $callString;
-
-        //ID документа, где расположен вызов Ditto
-        //Значение по умолчанию: Id текущего документа
-        $this->landing = $this->model->_id;
     }
 
     /*
@@ -69,11 +70,9 @@ class TvTagCloud extends \app\components\Ditto{
      */
     public function parseString(){
 
-        echo $this->callString.'<br>';
-
         $this->callString = str_replace('TvTagCloud?', '', $this->callString);
 
-        echo $this->callString.'<br>';
+        //echo $this->callString.'<br>';
 
         //получаем массив параметров для вызова обработки
         $params_list = explode('&', $this->callString);
@@ -90,89 +89,56 @@ class TvTagCloud extends \app\components\Ditto{
             }
         }
 
+        //TODO заглушка проверить чтобы в вызовк сниппета облака-тегов был указан шаблон для фильтрации доков
+        $this->template = 92;
+
     }
 
-    /*
-     * обработка указанных параметров и формирование условий выборки данных
-     */
-    public function mergeCriteria(){
 
-        //сперва укажим условие выборки по какому тегу
-        $criteria = new EMongoCriteria();
-
-        //указали по какому параметру ищим документы
-        //$criteria->compare('tv.'.$this->tvTags, '!= ""');
-        //$criteria->addCondition($this->tvTags, '', '$gte');
-
-        $condition = array();
-        //если указан исключающие значения, то укажим их в условии
-        if(!empty($this->exclude)){
-            $criteria->addCondition('tv.'.$this->tvTags, $this->exclude, '$gte');
-            $condition = array('tv.'.$this->tvTags=>$this->exclude);
-        }
-
-        //parent - может быть списком через запятую
-        $list = explode(',', str_replace(array('`',' '),'',$this->parent));
-        $condition = array();
-        foreach($list as $parent_id){
-            $condition[] = array('parent'=>$parent_id);
-        }
-        if(!empty($condition)){
-            $criteria->addOrCondition($condition);
-        }
-
-        return $condition;
-    }
 
     /*
      * выборка данных по условию+формирование результата
      */
     public function action(){
 
-        $this->tpl='<ul>';
+        $this->result='<ul>';
 
-        $criteria = $this->mergeCriteria();
 
-        // price: { $gt: 10 }
+        $collection = \Yii::$app->mongodb->getCollection(Content::collectionName());
 
-        $model = Content::model()->findOne(array('_id'=>5046));
-
-        $model->getChildrenDepth($model,0,3);
-
-        //$childrens = $model->findedChildrens;
-
-        //$rows = Content::model()->distinct('tv.'.$this->tvTags, array('parent'=>$this->parent));
-
-        //$rows = Yii::app()->mongodb->Content->distinct('tv.'.$this->tvTags, array('parent'=>5046));
-
-        //echo '<pre>'; print_r($rows);die();
+        $tags = $collection->aggregate(
+            array( '$match' => array( 'template'=> $this->template) ),//,'tv_'.$this->tvTags=>['in'=>['/.,./']]
+            array( '$group' => array(
+                '_id'=>'$tv_'.$this->tvTags,
+                'count'=>array( '$sum' => 1 ),
+            ))
+        );
 
         //формируем список ссылок для облака тегов
-        foreach($model->findedChildrens as $row){
-            //$this->tpl.='<li>'.CHtml::link($row->att);
-            //echo '<pre>'; print_r($row->tv);
-            //echo '<pre>'; print_r($row->_id);
+        foreach($tags as $tag){
 
-            if(isset($row->tv[$this->tvTags])){
-                //echo '<pre>'; print_r($row->tv);
-                $tag = $row->tv[$this->tvTags];
+            $expl = explode(',',$tag['_id']);
 
-                $expl = explode(',',$tag);
+            if($expl){
+                foreach($expl as $str){
 
-                if($expl){
-                    foreach($expl as $str){
-                        $this->tagsList[$str] = trim($str);
-                    }
-                }else{
-                    $this->tagsList[$tag] = trim($tag);
+                    if(empty($str)){continue;}
+
+                    $str = trim($str);
+
+                    $this->tagsList[$str] = $tag['count'];
                 }
+            }else{
+                $this->tagsList[$tag] = trim($tag);
             }
         }
 
-        echo '<pre>'; print_r($this->tagsList);
-
-        $this->tpl.='</ul>';
-        die();
+        if(!empty($this->tagsList)){
+            foreach($this->tagsList as $name_tag=>$count_tag){
+                $this->result.='<li>'.Html::a($name_tag.' ('.$count_tag.')',Url::to().'?'.$this->dittoID.'_tags='.$name_tag);
+                $this->result.'</li>';
+            }
+        }
+        $this->result.='</ul>';
     }
-
-} 
+}

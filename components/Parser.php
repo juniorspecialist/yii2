@@ -189,13 +189,14 @@ class Parser {
         }
 
         //вызов сниппета(TvTagCloud) - для тегирования по тв-параметру
-//        if(preg_match('/(\W|^)TvTagCloud(\W|$)/i',$html)){
-//            $tv_tag = new \app\components\TvTagCloud($model,$html);
-//            $tv_tag->html = $html;
-//            $tv_tag->parseString();
-//            $tv_tag->action();
-//            $replace =  $tv_tag->result;
-//        }
+        if(preg_match('/(\W|^)TvTagCloud(\W|$)/i',$html)){
+            $tv_tag = new \app\components\TvTagCloud($model,$html);
+            $tv_tag->html = $html;
+            $tv_tag->parseString();
+            $tv_tag->action();
+            $replace =  $tv_tag->result;
+            //die();
+        }
 
         //вызов сниппета (GlobalDitto2) - перелинковка страничек
         if(preg_match('/(\W|^)GlobalDitto2(\W|$)/i',$html)){

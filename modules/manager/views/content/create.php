@@ -13,6 +13,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="content-create">
 
 
+    <?php
+    foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+        echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+    }
+    ?>
+
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

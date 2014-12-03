@@ -58,7 +58,7 @@ yii\web\AssetBundle::register($this);
 
             [
                 'label' => 'Тв-параметры',
-                'content' => $this->render('tab_tv_params', ['model'=>$model, 'form'=>$form]),
+                'content' => $this->render('tab_tv_params', ['model'=>$model, 'form'=>$form, 'tv'=>$tv]),
                 //'headerOptions' => [...],
                 'options' => ['id' => 'tab_tv_params'],
             ],

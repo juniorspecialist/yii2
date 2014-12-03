@@ -68,6 +68,7 @@ class SiteController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
 
+        //echo '<pre>'; print_r($page->tpl->tv);die();
         $parser = new \app\components\Parser($page->tpl->content,$row);
 
         $parser->run();

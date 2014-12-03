@@ -2,10 +2,12 @@
 
 namespace app\modules\manager\controllers;
 
+use app\components\ContentWizard;
 use app\models\Template;
 use Yii;
 use app\models\Content;
 use app\models\ContentSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -72,15 +74,22 @@ class ContentController extends ContentBaseController
      */
     public function actionCreate()
     {
-
-
         $model = new Content();
 
+        //обработка подвязанны к шаблону тв-параметров и отображение их в форме
+        $wizard = new ContentWizard($model->findContentArray(['_id'=>(string)$model->_id]), $model->tpl);
+        $wizard->isNewRecord = $model->isNewRecord;
+        $wizard->run();
+
+
+       // $model->loadDefaultValues();//установка некоторых значений по умолчанию
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => (string)$model->_id]);
+            return $this->redirect(['update', 'id' => (string)$model->_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'tv'=>$wizard->tv,
             ]);
         }
     }
@@ -95,14 +104,35 @@ class ContentController extends ContentBaseController
     {
         $model = $this->findModel($id);
 
-        Yii::$app->formatter->locale = 'ru-RU';
+        //обработка подвязанны к шаблону тв-параметров и отображение их в форме
+        $wizard = new ContentWizard($model->findContentArray(['_id'=>(string)$model->_id]), $model->tpl);
+        $wizard->isNewRecord = $model->isNewRecord;
+        $wizard->run();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => (string)$model->_id]);
+        //валидация данных
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            // теперь обработаем тв-параметры и сохраним все данные вместе
+            $content = \Yii::$app->mongodb->getCollection('Content');
+            //очищаем от пустых значений POST массив(по тв-параметрам)
+            foreach($_POST['Content'] as $name=>$value_tv){
+                if(empty($value_tv) && !in_array( $name,$model->attributes())){
+                    unset($_POST['Content'][$name]);
+                }else{
+                    //TODO заглушка, сделать нормально
+                    if($name=='template'){$_POST['Content'][$name] = (int)$value_tv;}
+                }
+            }
+
+            $content->update(['_id'=>$model->_id],$_POST['Content']);
+
+            \Yii::$app->getSession()->setFlash('info', 'Успешно обновили документ');
+
+            return $this->redirect(['update', 'id' => (string)$model->_id]);
         } else {
 
             return $this->render('update', [
                 'model' => $model,
+                'tv'=>$wizard->tv,
             ]);
         }
     }

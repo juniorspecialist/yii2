@@ -44,6 +44,9 @@ class Content extends \yii\mongodb\ActiveRecord
 
 //    public $pagetitle;
 //    public $alias;
+    //public $parent;
+    //public $id;
+    //public $template;
 
     /**
      * @inheritdoc
@@ -51,6 +54,13 @@ class Content extends \yii\mongodb\ActiveRecord
     public static function collectionName()
     {
         return ['modx', 'Content'];
+    }
+
+    //TODO доделать заполнение параметров документа по-умолчанию. при создании нового дока
+    public function init()
+    {
+        parent::init();
+        //$this->status = 'active';
     }
 
     public function behaviors()
@@ -118,6 +128,7 @@ class Content extends \yii\mongodb\ActiveRecord
             'hidemenu',
             'parent',
             'introtext',
+
         ];
     }
 
@@ -129,12 +140,20 @@ class Content extends \yii\mongodb\ActiveRecord
         return [
             //[['username', 'password'], 'required'],
             [['parent', 'pagetitle'], 'required'],
-            //['id, parent', 'filter', 'filter' => 'intval'],
+
+            ['template', 'filter', 'filter' => function ($value) {
+                // normalize template input here
+                return settype($value, 'integer');
+            }],
+
+            [['id', 'parent', 'hidemenu','deleted', 'template','cacheable','searchable','menuindex','isfolder','published'], 'filter', 'filter' => 'intval'],
             [['pub_date'], 'default', 'value' => time()],
+            // normalize "template" input
+
             [['isfolder'], 'default', 'value' => 0],
             [['cacheable','searchable'], 'default', 'value' => 1],
             //['id', 'unique', 'targetClass' => Content::className(), 'message' => 'This id has already been taken.'],
-            ['alias', 'unique', 'targetClass' => Content::className(), 'message' => 'Данный псевдоним уже существует.'],
+            [['alias','id'], 'unique', 'targetClass' => Content::className(), 'message' => 'Данный псевдоним уже существует.'],
             [['id',  'contentType', 'pagetitle', 'description', 'alias', 'published', 'pub_date', 'content', 'isfolder', 'template', 'menuindex', 'searchable', 'cacheable', 'createdby', 'createdon', 'editedby', 'deleted', 'publishedon', 'menutitle', 'hidemenu', 'parent', 'introtext'], 'safe']
         ];
     }
@@ -171,22 +190,11 @@ class Content extends \yii\mongodb\ActiveRecord
         ];
     }
 
-    public function getTvParam($name_tv_param){
 
-        $list = $this->toArray();
 
-        echo '<pre>'; print_r($list);
-
-        if(!empty($list[$name_tv_param])){
-            return $list[$name_tv_param];
-        }else{
-            return '';
-        }
-    }
-
-    public function getPrimaryKey($asArray = false){
-        return $this->id;
-    }
+//    public function getPrimaryKey($asArray = false){
+//        return $this->id;
+//    }
 
     /*
      * получаем список элементов дерева по PARENT
@@ -214,22 +222,39 @@ class Content extends \yii\mongodb\ActiveRecord
     }
 
 
+    /*
+     * поиск документа по условию+возвращаем не объект а МАССИВ
+     * $where - массив условий для выборки(поиска)
+     * $how - сколько записей ожидаем получить, 1  - одна запись, если не равно-1, значит много
+     */
+    public function findContentArray(array $where, $how = 1){
+
+        $query = new Query();
+
+        $query->from(Content::collectionName());
+
+        $query->where($where);
+
+        if($how==1){
+            return $query->one();
+        }else{
+            return $query->all();
+        }
+    }
 
     public function afterFind()
     {
         //работа с датами в документе
-        if($this->pub_date==0 || empty($this->pub_date)){
-            $this->pub_date = date('Y-m-d', time());
+        if($this->pub_date!=0 && empty($this->pub_date)){
+            $this->pub_date = date('Y-m-d', $this->pub_date);
+        }else{
+            $this->pub_date = '';
         }
 
-//        $query = new Query();
-//        $query->select([$this->idFieldName, $this->keyFieldName, $this->valueFieldName]);
-//        $query->from($this->tableName);
-//        $query->where([$this->idFieldName => $this->owner->id]);
-//
-//        foreach ($query->all() as $property) {
-//            $this->_properties[$property[$this->keyFieldName]] = Json::decode($property[$this->valueFieldName]);
-//        }
+        if($this->publishedon!=0 && empty($this->publishedon)){
+            $this->publishedon = date('Y-m-d', $this->publishedon);
+        }else{
+            $this->publishedon = '';
+        }
     }
-
 }

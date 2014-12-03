@@ -18,6 +18,9 @@ use yii\helpers\ArrayHelper;
  */
 class Template extends \yii\mongodb\ActiveRecord
 {
+
+    //public $tvlist;
+
     /**
      * @inheritdoc
      */
@@ -74,6 +77,69 @@ class Template extends \yii\mongodb\ActiveRecord
         ];
     }
 
+
+    /*
+     *связь тв-параметров с шаблоном
+     */
+    public function getTv(){
+
+        //запрос на получение всего массива данных по шаблону в том числе и списка неизвестных полей
+        $query = new Query();
+
+        $query->from('Template');
+
+        $query->where(['_id' => (string)$this->_id]);
+
+        $row = $query->one();
+
+        //получаем список тв-параметров подвязанных к шаблону, список неизвестных аттрибутов
+        $list  = [];
+
+        foreach($row as $index=>$attribute){
+            if(!in_array($index, $this->attributes())){
+                $list[] = $index;
+            }
+        }
+
+        return Tv::find()->where(['in', 'name', $list])->all();
+    }
+
+
+
+    /*
+     *связь тв-параметров с шаблоном
+     */
+    public function getTvList(){
+
+        //запрос на получение всего массива данных по шаблону в том числе и списка неизвестных полей
+        $query = new Query();
+
+        $query->from('Template');
+
+        $query->where(['id' => (int)$this->id]);
+
+        $row = $query->one();
+
+        //получаем список тв-параметров подвязанных к шаблону, список неизвестных аттрибутов
+        $list  = [];
+
+        foreach($row as $index=>$attribute){
+            if(!in_array($index, $this->attributes())){
+                $list[] = $index;
+            }
+        }
+
+        //запрос на получение всего массива данных по шаблону в том числе и списка неизвестных полей
+        $query_tv = new Query();
+
+        $query_tv->from('Tv');
+
+        $query_tv->where(['in', 'name', $list]);
+
+        $rows_tv = $query_tv->all();
+
+        return $rows_tv;
+    }
 
     /*
      * получаем список шаблонов

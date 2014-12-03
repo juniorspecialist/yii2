@@ -12,11 +12,17 @@ $this->params['breadcrumbs'][] = 'Редактирование';
 ?>
 <div class="content-update">
 
+    <?php
+    foreach (Yii::$app->session->getAllFlashes() as $key => $message) {
+        echo '<div class="alert alert-' . $key . '">' . $message . '</div>';
+    }
+    ?>
 
 
 
     <?= $this->render('_form', [
         'model' => $model,
+        'tv'=>$tv,
     ]) ?>
 
 </div>

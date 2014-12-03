@@ -34,11 +34,6 @@
 
 <?= $form->field($model, 'cacheable')->checkbox() ?>
 
-<?= $form->field($model, 'createdby')->checkbox() ?>
-
-<?= $form->field($model, 'createdon') ?>
-
-<?= $form->field($model, 'editedby') ?>
 
 <?= $form->field($model, 'deleted')->checkbox() ?>
 
